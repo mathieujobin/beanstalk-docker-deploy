@@ -18,6 +18,10 @@ timestamp=$(date --rfc-3339=seconds | sed 's/[ :+-]//g')
 echo -e "FROM $remote_repo/$app-$stage:$timestamp\nEXPOSE 80" > Dockerfile
 git add Dockerfile
 
+# Auto gen EB config to the application
+./gen_eb_config $EB_APP_NAME $AWS_EC2_KEYNAME $AWS_REGION
+git add -f .elasticbeanstalk/config.yml
+
 # Secret password to decrypt GPG encryped file containing app-stage specific vars
 gpg_secret_var_name="${GPG_ENV_PREFIX}_${stage^^}_GPG_SECRET"
 

@@ -21,6 +21,8 @@ EB_STAGING_WATCH="abcdef-staging-all"
 EB_PRODUCTION_WATCH="abcdef-production-web"
 S3_URL_PREFIX="bucketname/beanstalk-config/abcdef"
 S3_GPG_FILE_PREFIX="abcdef"
+EB_APP_NAME=acme_abcdef
+AWS_EC2_KEYNAME=ec2keyname
 ```
 
 Your .bashrc will contain your GPG secret
