@@ -1,0 +1,6 @@
+.env*local
+tmp/
+.tmp.env*local
+.tmp.env*local.gpg
+.elasticbeanstalk/config.yml
+Dockerfile

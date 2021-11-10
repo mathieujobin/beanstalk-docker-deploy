@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+require_relative 'lib/gpg_encrypted_config_on_s3'
+
+if ARGV.length != 3
+  puts "needs 3 args, a project folder, a stage and an action"
+end
+
+eval File.read("#{ARGV[0]}/.deploy_vars")
+
+gpgs3config = GpgEncryptedConfigOnS3.new(GPG_ENV_PREFIX, ARGV[1], S3_URL_PREFIX, S3_GPG_FILE_PREFIX)
+
+case ARGV[2]
+when "download"
+  gpgs3config.overwrite_local_from_s3
+when "compare"
+  gpgs3config.compare_local_with_s3
+when "push"
+  gpgs3config.push_local_to_s3
+end
