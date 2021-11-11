@@ -3,12 +3,12 @@
 require 'yaml'
 filename = '.elasticbeanstalk/config.yml'
 data = {
-  global: {
-    application_name: ARGV[0] || raise('EB_APP_NAME missing'),
-    default_ec2_keyname: ARGV[1] || raise('AWS_EC2_KEYNAME missing'),
-    default_platform: "Docker running on 64bit Amazon Linux 2",
-    default_region: ARGV[2] || raise('AWS_REGION missing'),
-    workspace_type: "Application"
+  "global" => {
+    "application_name" => ARGV[0] || raise('EB_APP_NAME missing'),
+    "default_ec2_keyname" => ARGV[1] || raise('AWS_EC2_KEYNAME missing'),
+    "default_platform" => "Docker running on 64bit Amazon Linux 2",
+    "default_region" => ARGV[2] || raise('AWS_REGION missing'),
+    "workspace_type" => "Application"
   }
 }
 File.open(filename, "wb+") { |f| f.write data.to_yaml }
