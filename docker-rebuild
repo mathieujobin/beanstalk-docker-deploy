@@ -36,9 +36,9 @@ remote_repo=$DOCKER_REMOTE
 timestamp=$(date --rfc-3339=seconds | sed 's/[ :+-]//g')
 
 # Setting up 2nd stage Dockerfile with build_label
-build_label=$app-$stage:$gitsha:$timestamp
+build_label=$app-$stage:$gitsha-$timestamp
 echo -e "FROM $remote_repo/$build_label\nEXPOSE 80" > Dockerfile
-git add Dockerfile
+git add -f Dockerfile
 
 # Tagging and pushing to remote
 sudo docker tag $app-$stage-tmp $remote_repo/$build_label
