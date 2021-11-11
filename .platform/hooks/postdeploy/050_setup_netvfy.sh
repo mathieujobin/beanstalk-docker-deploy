@@ -29,7 +29,7 @@ function add_node_to_network() {
     -d '{"network_description":"'${NET_DESC}'", "description":"'${NODE_DESC}'"}' -X POST https://${HOST}/v1/node
 
   # get NET_UID
-  NET_UID="$(curl -s -H 'X-netvfy-email: '${EMAIL}'' -H 'X-netvfy-apikey: '${APIKEY}'' https://${HOST}/v1/network | jq -r ".networks[] | select(.description==\"japan\").uid")"
+  NET_UID="$(curl -s -H 'X-netvfy-email: '${EMAIL}'' -H 'X-netvfy-apikey: '${APIKEY}'' https://${HOST}/v1/network | jq -r ".networks[] | select(.description==\"${NET_DESC}\").uid")"
 
   PROV_CODE=$(curl -s -H 'X-netvfy-email: '${EMAIL}'' -H 'X-netvfy-apikey: '${APIKEY}'' https://${HOST}/v1/node?network_uid=$NET_UID \
     | jq -r ".nodes[] | select(.description==\"$NODE_DESC\").provcode")
