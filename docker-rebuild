@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-if [ $# != 3 ]; then
+if [ $# != 3 -a $# != 2 ]; then
   echo missing arguments: $0 app_folder stage message
   exit 34
 fi
@@ -21,7 +21,12 @@ gpg_secret_var_name="${GPG_ENV_PREFIX}_${stage^^}_GPG_SECRET"
 
 # Building the app
 cd $app_folder
+
 gitsha=$(git show -s --oneline | awk {'print $1'})
+if [ "$message" = "" ];then
+  message=$(git show -s --pretty='format:%s, %ad')
+fi
+
 sudo docker build \
   --build-arg env_secret_passphrase=${!gpg_secret_var_name} \
   --build-arg deploy_stage=$stage \
