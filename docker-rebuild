@@ -5,18 +5,14 @@ if [ $# != 3 ]; then
   exit 34
 fi
 
-app=$1
+app_folder=$1
 stage=$2
 message=$3
 
 # Loading app specific vars
-source $app/.deploy_vars
+source $app_folder/.deploy_vars
 
-# Setting up 2nd stage Dockerfile with timestamp
-remote_repo=$DOCKER_REMOTE
-timestamp=$(date --rfc-3339=seconds | sed 's/[ :+-]//g')
-echo -e "FROM $remote_repo/$app-$stage:$timestamp\nEXPOSE 80" > Dockerfile
-git add Dockerfile
+app=$DOCKER_TAG_PREFIX
 
 # Auto gen EB config to the application
 ./gen_eb_config $EB_APP_NAME $AWS_EC2_KEYNAME $AWS_REGION
@@ -28,18 +24,27 @@ gpg_secret_var_name="${GPG_ENV_PREFIX}_${stage^^}_GPG_SECRET"
 [ "$GPG_DEBUG" = "true" ] && echo "$gpg_secret_var_name ==> ${!gpg_secret_var_name}"
 
 # Building the app
-cd $app
+cd $app_folder
+gitsha=$(git show -s --oneline | awk {'print $1'})
 sudo docker build \
   --build-arg env_secret_passphrase=${!gpg_secret_var_name} \
   --build-arg deploy_stage=$stage \
   -t $app-$stage-tmp .
 cd -
 
+remote_repo=$DOCKER_REMOTE
+timestamp=$(date --rfc-3339=seconds | sed 's/[ :+-]//g')
+
+# Setting up 2nd stage Dockerfile with build_label
+build_label=$app-$stage:$gitsha:$timestamp
+echo -e "FROM $remote_repo/$build_label\nEXPOSE 80" > Dockerfile
+git add Dockerfile
+
 # Tagging and pushing to remote
-sudo docker tag $app-$stage-tmp $remote_repo/$app-$stage:$timestamp
+sudo docker tag $app-$stage-tmp $remote_repo/$build_label
 sudo docker tag $app-$stage-tmp $remote_repo/$app-$stage:latest
 sudo $(aws ecr get-login --region $AWS_REGION --profile $AWS_CRED_PROFILE --no-include-email)
-sudo docker push $remote_repo/$app-$stage:$timestamp
+sudo docker push $remote_repo/$build_label
 sudo docker push $remote_repo/$app-$stage:latest
 
 echo "Ready to deploy? [Enter for yes, CTRL-C to cancel]"
@@ -47,6 +52,6 @@ read answer
 
 for envname in $EB_${stage^^}_LIST
 do
-  eb deploy --staged --nohang --label $app-$stage:$timestamp $envname
+  eb deploy --staged --nohang --message "$message" --label "$build_label" $envname
 done
 eb events -f $EB_${stage^^}_WATCH

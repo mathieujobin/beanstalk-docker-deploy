@@ -6,8 +6,10 @@ My project uses a GPG encrypted file stored on S3 that is then use as a .env fil
 If you don't, that might get in your way.
 
 Your project will need a .deploy_vars file such as this one.
+double quotes are necessary as this file is both loaded in bash and ruby
 
 ```
+DOCKER_TAG_PREFIX="abcdef"
 GPG_ENV_PREFIX="ABCDEF"
 GPG_DEBUG=false
 DOCKER_REMOTE="0123456789.dkr.ecr.us-east-1.amazonaws.com"
@@ -21,8 +23,8 @@ EB_STAGING_WATCH="abcdef-staging-all"
 EB_PRODUCTION_WATCH="abcdef-production-web"
 S3_URL_PREFIX="bucketname/beanstalk-config/abcdef"
 S3_GPG_FILE_PREFIX="abcdef"
-EB_APP_NAME=acme_abcdef
-AWS_EC2_KEYNAME=ec2keyname
+EB_APP_NAME="acme_abcdef"
+AWS_EC2_KEYNAME="ec2keyname"
 ```
 
 Your .bashrc will contain your GPG secret
