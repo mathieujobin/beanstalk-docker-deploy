@@ -50,8 +50,11 @@ sudo docker push $remote_repo/$app-$stage:latest
 echo "Ready to deploy? [Enter for yes, CTRL-C to cancel]"
 read answer
 
-for envname in $EB_${stage^^}_LIST
+env_list_var="EB_${stage^^}_LIST"
+env_watch_var="EB_${stage^^}_WATCH"
+
+for envname in ${!env_list_var}
 do
   eb deploy --staged --nohang --message "$message" --label "$build_label" $envname
 done
-eb events -f $EB_${stage^^}_WATCH
+eb events -f ${!env_watch_var}
