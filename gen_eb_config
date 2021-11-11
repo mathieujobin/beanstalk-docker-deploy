@@ -1,14 +1,28 @@
 #!/usr/bin/env ruby
 
 require 'yaml'
+
+eval File.read("#{ARGV[0]}/.deploy_vars")
+
 filename = '.elasticbeanstalk/config.yml'
 data = {
   "global" => {
-    "application_name" => ARGV[0] || raise('EB_APP_NAME missing'),
-    "default_ec2_keyname" => ARGV[1] || raise('AWS_EC2_KEYNAME missing'),
+    "application_name" => EB_APP_NAME || raise('EB_APP_NAME missing'),
+    "default_ec2_keyname" => AWS_EC2_KEYNAME || raise('AWS_EC2_KEYNAME missing'),
     "default_platform" => "Docker running on 64bit Amazon Linux 2",
-    "default_region" => ARGV[2] || raise('AWS_REGION missing'),
+    "default_region" => AWS_REGION || raise('AWS_REGION missing'),
     "workspace_type" => "Application"
+  }
+}
+File.open(filename, "wb+") { |f| f.write data.to_yaml }
+
+filename = '.ebextensions/machine-identification.config'
+data = {
+  "container_commands" => {
+    "01_execute" => {
+      "command" => "echo \"#{ARGV[1]}\" > /home/ec2-user/machine-id",
+      "ignoreErrors" => "false"
+    }
   }
 }
 File.open(filename, "wb+") { |f| f.write data.to_yaml }

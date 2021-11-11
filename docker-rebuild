@@ -14,10 +14,6 @@ source $app_folder/.deploy_vars
 
 app=$DOCKER_TAG_PREFIX
 
-# Auto gen EB config to the application
-./gen_eb_config $EB_APP_NAME $AWS_EC2_KEYNAME $AWS_REGION
-git add -f .elasticbeanstalk/config.yml
-
 # Secret password to decrypt GPG encryped file containing app-stage specific vars
 gpg_secret_var_name="${GPG_ENV_PREFIX}_${stage^^}_GPG_SECRET"
 
@@ -39,6 +35,10 @@ timestamp=$(date --rfc-3339=seconds | sed 's/[ :+-]//g')
 build_label=$app-$stage:$gitsha-$timestamp
 echo -e "FROM $remote_repo/$build_label\nEXPOSE 80" > Dockerfile
 git add -f Dockerfile
+
+# Auto gen EB config to the application
+./gen_eb_config $app_folder $build_label
+git add -f .elasticbeanstalk/config.yml .ebextensions/machine-identification.config
 
 # Tagging and pushing to remote
 sudo docker tag $app-$stage-tmp $remote_repo/$build_label
