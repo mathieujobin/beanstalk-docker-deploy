@@ -20,8 +20,12 @@ class GpgEncryptedConfigOnS3
   end
 
   def push_local_to_s3
-    system "gpg --batch -c --cipher-algo CAST5 --passphrase #{passphrase} .env.#{stage}.local"
-    system "aws s3 cp --acl public-read .env.#{stage}.local.gpg s3://#{s3_url}"
+    system "gpg --batch -c --cipher-algo CAST5 --passphrase #{passphrase} #{decrypted_env_file}"
+    system "aws s3 cp --acl public-read #{decrypted_env_file}.gpg s3://#{s3_url}"
+  end
+
+  def create_file_if_not_exists
+    system "touch #{decrypted_env_file}"
   end
 
   private
@@ -35,7 +39,7 @@ class GpgEncryptedConfigOnS3
   end
 
   def decrypted_env_file
-    ".env.#{stage}.local"
+    "#{gpg_file_prefix}.env.#{stage}.local"
   end
 
   def passphrase

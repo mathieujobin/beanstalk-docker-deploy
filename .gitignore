@@ -1,6 +1,6 @@
 .env*local
 tmp/
-.tmp.env*local
-.tmp.env*local.gpg
+*.env*local
+*.env*local.gpg
 .elasticbeanstalk/config.yml
 Dockerfile

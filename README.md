@@ -38,6 +38,10 @@ You can download and decrypt your config from S3 by doing
 
 `./gpg_config ../project_app/ staging download`
 
+You can create an empty file at the right location by doing
+
+`./gpg_config ../project_app/ staging init`
+
 After you modified your local config, you can do a compare like this
 
 `./gpg_config ../project_app/ staging compare`

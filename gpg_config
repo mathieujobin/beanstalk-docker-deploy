@@ -17,4 +17,6 @@ when "compare"
   gpgs3config.compare_local_with_s3
 when "push"
   gpgs3config.push_local_to_s3
+when "init"
+  gpgs3config.create_file_if_not_exists
 end
