@@ -20,6 +20,7 @@ class GpgEncryptedConfigOnS3
   end
 
   def push_local_to_s3
+    system "rm #{decrypted_env_file}.gpg"
     system "gpg --batch -c --cipher-algo CAST5 --passphrase #{passphrase} #{decrypted_env_file}"
     system "aws s3 cp --acl public-read #{decrypted_env_file}.gpg s3://#{s3_url}"
   end
@@ -30,7 +31,7 @@ class GpgEncryptedConfigOnS3
 
   private
 
-  def gpg_encrypted_file
+  def tmp_gpg_encrypted_file
     ".tmp#{decrypted_env_file}.gpg"
   end
 
@@ -51,7 +52,8 @@ class GpgEncryptedConfigOnS3
   end
 
   def download_to_temp_file
-    system "aws s3 cp s3://#{s3_url} #{gpg_encrypted_file}"
-    system "gpg --batch --cipher-algo CAST5 --passphrase #{passphrase} -o #{tmp_decrypted_env_file} -d #{gpg_encrypted_file}"
+    system "rm #{tmp_gpg_encrypted_file} #{tmp_decrypted_env_file}"
+    system "aws s3 cp s3://#{s3_url} #{tmp_gpg_encrypted_file}"
+    system "gpg --batch --cipher-algo CAST5 --passphrase #{passphrase} -o #{tmp_decrypted_env_file} -d #{tmp_gpg_encrypted_file}"
   end
 end
