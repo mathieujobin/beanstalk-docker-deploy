@@ -58,8 +58,10 @@ read answer
 env_list_var="EB_${stage^^}_LIST"
 env_watch_var="EB_${stage^^}_WATCH"
 
+git rm --cached README.md docker-rebuild gpg_config gen_eb_config lib/gpg_encrypted_config_on_s3.rb
 for envname in ${!env_list_var}
 do
   eb deploy --staged --nohang --message "$message" --label "$build_label" $envname
 done
+git reset
 eb events -f ${!env_watch_var}
