@@ -16,13 +16,20 @@ data = {
 }
 File.open(filename, "wb+") { |f| f.write data.to_yaml }
 
-filename = '.ebextensions/machine-identification.config'
-data = {
-  "container_commands" => {
-    "01_execute" => {
-      "command" => "echo \"#{ARGV[1]}\" > /home/ec2-user/machine-id",
-      "ignoreErrors" => "false"
+def create_file_with_content(ebext_name, filename, content)
+  filename = ".ebextensions/#{ebext_name}.config"
+  data = {
+    "container_commands" => {
+      "01_execute" => {
+        "command" => "echo \"#{content}\" > #{filename}",
+        "ignoreErrors" => "false"
+      }
     }
   }
-}
-File.open(filename, "wb+") { |f| f.write data.to_yaml }
+  File.open(filename, "wb+") { |f| f.write data.to_yaml }
+end
+
+create_file_with_content('machine-identification', '/home/ec2-user/machine-id', ARGV[1])
+
+command = "sudo docker exec -it $(sudo docker container ls | tail -n 1 | awk {'print $1'}) bash"
+create_file_with_content('create_docker_jump', '/home/ec2-user/jumpon', command)
