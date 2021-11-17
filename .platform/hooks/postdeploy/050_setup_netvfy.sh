@@ -16,7 +16,9 @@ function build_install_agent() {
 }
 
 function add_node_to_network() {
-  EC2_INSTANCE_ID="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-id || echo unknown`"
+  ec2_instance_url="http://169.254.169.254/latest/meta-data/instance-id"
+  EC2_TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`
+  EC2_INSTANCE_ID="`wget -q -O - $ec2_instance_url || curl -H "X-aws-ec2-metadata-token: $EC2_TOKEN" -v $ec2_instance_url || echo unknown`"
   PASSWORD="$netvfy_password"
   EMAIL="$netvfy_username"
   HOST="api.netvfy.com"
