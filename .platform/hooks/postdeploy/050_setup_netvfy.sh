@@ -16,7 +16,7 @@ function build_install_agent() {
 }
 
 function add_node_to_network() {
-  EC2_INSTANCE_ID="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-id`"
+  EC2_INSTANCE_ID="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-id || echo unknown`"
   PASSWORD="$netvfy_password"
   EMAIL="$netvfy_username"
   HOST="api.netvfy.com"
