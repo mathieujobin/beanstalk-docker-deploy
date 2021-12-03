@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'yaml'
+require 'byebug'
 
 eval File.read("#{ARGV[0]}/.deploy_vars")
 
@@ -26,7 +27,8 @@ def create_file_with_content(ebext_name, filename, content)
       }
     }
   }
-  File.open(filename, "wb+") { |f| f.write data.to_yaml }
+  # default to 81 https://ruby-doc.org/stdlib-2.7.1/libdoc/psych/rdoc/Psych.html#method-c-dump
+  File.open(filename, "wb+") { |f| f.write Psych.dump(data, :line_width => 150) }
 end
 
 create_file_with_content('machine-identification', '/home/ec2-user/machine-id', ARGV[1])
