@@ -43,7 +43,7 @@ git add -f Dockerfile
 
 # Auto gen EB config to the application
 ./gen_eb_config $app_folder $build_label
-git add -f .elasticbeanstalk/config.yml .ebextensions/machine-identification.config
+git add -f .elasticbeanstalk/config.yml .ebextensions/*.config
 
 # Tagging and pushing to remote
 sudo docker tag $app-$stage-tmp $remote_repo/$build_label
