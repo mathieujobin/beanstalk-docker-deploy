@@ -17,12 +17,12 @@ data = {
 }
 File.open(filename, "wb+") { |f| f.write data.to_yaml }
 
-def create_file_with_content(ebext_name, filename, content)
+def create_file_with_content(ebext_name, output_file, content)
   filename = ".ebextensions/#{ebext_name}.config"
   data = {
     "container_commands" => {
       "01_execute" => {
-        "command" => "echo \"#{content}\" > #{filename}",
+        "command" => "echo \"#{content}\" > #{output_file}",
         "ignoreErrors" => "false"
       }
     }
