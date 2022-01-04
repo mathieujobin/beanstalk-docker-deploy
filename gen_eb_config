@@ -33,5 +33,5 @@ end
 
 create_file_with_content('machine-identification', '/home/ec2-user/machine-id', ARGV[1])
 
-command = "sudo docker exec -it $(sudo docker container ls | tail -n 1 | awk {'print $1'}) bash"
+command = "sudo docker exec -it \\$(sudo docker container ls | tail -n 1 | awk {'print \\$1'}) bash"
 create_file_with_content('create_docker_jump', '/home/ec2-user/jumpon', command)
