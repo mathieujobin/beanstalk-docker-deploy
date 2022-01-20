@@ -42,7 +42,7 @@ echo -e "FROM $remote_repo/$build_label\nEXPOSE 80" > Dockerfile
 git add -f Dockerfile
 
 # Auto gen EB config to the application
-./gen_eb_config $app_folder $build_label
+./gen_eb_config $app_folder $stage $build_label
 git add -f .elasticbeanstalk/config.yml .ebextensions/*.config
 
 # Tagging and pushing to remote

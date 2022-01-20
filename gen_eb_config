@@ -31,7 +31,15 @@ def create_file_with_content(ebext_name, output_file, content)
   File.open(filename, "wb+") { |f| f.write Psych.dump(data, :line_width => 150) }
 end
 
-create_file_with_content('machine-identification', '/home/ec2-user/machine-id', ARGV[1])
+create_file_with_content('machine-identification', '/home/ec2-user/machine-id', ARGV[2])
 
-command = "sudo docker exec -it \\$(sudo docker container ls | tail -n 1 | awk {'print \\$1'}) bash"
-create_file_with_content('create_docker_jump', '/home/ec2-user/jumpon', command)
+command = %q[if [ \"\$1\" = \"bash\" ]
+then
+  cmd=\"bash\"
+else
+  cmd=\"bundle exec rails c -e staging\"
+fi
+echo \"executing \$cmd on container\"
+sudo docker exec -it \$(sudo docker container ls | tail -n 1 | awk {'print \$1'}) \$cmd]
+command.sub!('staging', ARGV[1]) if ARGV[1] != 'staging'
+create_file_with_content('create_docker_jump', '/home/ec2-user/jumpin', command)
