@@ -5,6 +5,8 @@ Your projects will need to have a Dockerfile and be ready to be built.
 My project uses a GPG encrypted file stored on S3 that is then use as a .env file
 If you don't, that might get in your way.
 
+## Getting-Started
+
 Your project will need a .deploy_vars file such as this one.
 double quotes are necessary as this file is both loaded in bash and ruby
 
@@ -26,6 +28,16 @@ S3_GPG_FILE_PREFIX="abcdef"
 EB_APP_NAME="acme_abcdef"
 AWS_EC2_KEYNAME="ec2keyname"
 ```
+
+## Initial push
+
+before you run the script the first time, you want to make sure you create the Amazon ECR repository first
+the path is built with the variables set above DOCKER_REMOTE/DOCKER_TAG_PREFIX-STAGE
+
+then I should add some flag to my script, but you need to do `eb create app-stage`
+so for example with the above, it should be `abcdef-staging` or `abcdef-production`
+
+## Optional - .env automatically encrypted/decrypted and stored on S3
 
 Your .bashrc will contain your GPG secret
 

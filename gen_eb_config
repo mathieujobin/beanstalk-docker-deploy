@@ -10,7 +10,7 @@ data = {
   "global" => {
     "application_name" => EB_APP_NAME || raise('EB_APP_NAME missing'),
     "default_ec2_keyname" => AWS_EC2_KEYNAME || raise('AWS_EC2_KEYNAME missing'),
-    "default_platform" => "Docker running on 64bit Amazon Linux 2",
+    "default_platform" => 'docker',
     "default_region" => AWS_REGION || raise('AWS_REGION missing'),
     "workspace_type" => "Application"
   }
