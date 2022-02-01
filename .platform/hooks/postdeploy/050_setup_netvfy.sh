@@ -4,6 +4,12 @@
 
 # netvfy_username, netvfy_password, netvfy_netdesc, netvfy_node_prefix
 
+if [ "$netvfy_username" = "" -o "$netvfy_password" = "" -o "$netvfy_netdesc" = "" -o "$netvfy_node_prefix" = "" ]
+then
+  echo "config missing"
+  exit 0
+fi
+
 NET_DESC="$netvfy_netdesc"
 DEST_SCRIPT="/usr/local/sbin/netvfy-agent"
 
@@ -35,6 +41,13 @@ function add_node_to_network() {
 
   PROV_CODE=$(curl -s -H 'X-netvfy-email: '${EMAIL}'' -H 'X-netvfy-apikey: '${APIKEY}'' https://${HOST}/v1/node?network_uid=$NET_UID \
     | jq -r ".nodes[] | select(.description==\"$NODE_DESC\").provcode")
+
+if [ "$PROV_CODE" = "" ]
+then
+  echo "provision code already used"
+  exit 0
+fi
+
 
   $DEST_SCRIPT -k "$PROV_CODE" -n $NET_DESC
 
