@@ -43,3 +43,8 @@ echo \"executing \$cmd on container\"
 sudo docker exec -it \$(sudo docker container ls | tail -n 1 | awk {'print \$1'}) \$cmd]
 command.sub!('staging', ARGV[1]) if ARGV[1] != 'staging'
 create_file_with_content('create_docker_jump', '/home/ec2-user/jumpin', command)
+
+app_name_parts = EB_APP_NAME.split(/_/)
+figlet_content = `toilet "#{app_name_parts.shift}" -w 200` + "\n"
+figlet_content += `toilet "#{app_name_parts.join(' ')} #{ARGV[1]}" -w 200` + "\n"
+create_file_with_content('motd_override', '/etc/motd', figlet_content.gsub(/"/, '\"'))
