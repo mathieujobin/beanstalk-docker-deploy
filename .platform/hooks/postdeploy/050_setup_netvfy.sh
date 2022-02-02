@@ -4,6 +4,9 @@
 
 # netvfy_username, netvfy_password, netvfy_netdesc, netvfy_node_prefix
 
+# import env vars from elastic beanstalk environment
+for s in $(/opt/elasticbeanstalk/bin/get-config environment | jq -r "to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]" ); do export $s; done
+
 if [ "$netvfy_username" = "" -o "$netvfy_password" = "" -o "$netvfy_netdesc" = "" -o "$netvfy_node_prefix" = "" ]
 then
   echo "config missing"
