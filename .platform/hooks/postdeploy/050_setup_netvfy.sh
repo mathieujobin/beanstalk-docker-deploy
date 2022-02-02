@@ -69,3 +69,5 @@ else
   add_node_to_network
   $DEST_SCRIPT -c $NET_DESC &
 fi
+
+exit 0
