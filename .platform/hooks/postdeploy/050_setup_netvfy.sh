@@ -62,7 +62,8 @@ then
 fi
 
 # grep -q $NET_DESC /root/.config/netvfy/nvagent.json
-if [ -e /root/.config/netvfy/nvagent.json ]
+# if [[ $(sudo file /root/.config/netvfy/nvagent.json) ]]
+if [[ $(sudo cat /root/.config/netvfy/nvagent.json | jq -r ".networks[] | select(.name==\"$NET_DESC\").pvkey") ]]
 then
   $DEST_SCRIPT -c $NET_DESC &
 else
