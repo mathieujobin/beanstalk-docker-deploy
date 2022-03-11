@@ -19,6 +19,8 @@ gpg_secret_var_name="${GPG_ENV_PREFIX}_${stage^^}_GPG_SECRET"
 
 [ "$GPG_DEBUG" = "true" ] && echo "$gpg_secret_var_name ==> ${!gpg_secret_var_name}"
 
+builder_gitsha=$(git show -s --oneline | awk {'print $1'})
+
 # Building the app
 cd $app_folder
 
@@ -27,9 +29,11 @@ if [ "$message" = "" ];then
   message=$(git show -s --pretty='format:%s, %ad')
 fi
 
-sudo docker build \
+time sudo docker build \
   --build-arg env_secret_passphrase=${!gpg_secret_var_name} \
   --build-arg deploy_stage=$stage \
+  --build-arg app_gitsha=$gitsha \
+  --build-arg builder_gitsha=$builder_gitsha \
   -t $app-$stage-tmp .
 cd -
 
