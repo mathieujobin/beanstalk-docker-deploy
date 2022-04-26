@@ -82,12 +82,18 @@ fi
 # if [[ $(sudo file /root/.config/netvfy/nvagent.json) ]]
 if [[ $(sudo cat /root/.config/netvfy/nvagent.json | jq -r ".networks[] | select(.name==\"$NET_DESC\").pvkey") ]]
 then
-  log_debug "netvfy: node is already provision, connecting to the network..."
-  $DEST_SCRIPT -c $NET_DESC &
+  log_debug "netvfy: node is already provision, creating a cron job to connect to the network..."
 else
   add_node_to_network
-  log_debug "netvfy: connecting to the network..."
-  $DEST_SCRIPT -c $NET_DESC &
+  log_debug "netvfy: creating a cron job to connect to the network..."
 fi
+
+echo "
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+*/2 * * * * root ps auxww | grep -q ^root.*netvfy-agent.*$NET_DESC || $DEST_SCRIPT -c $NET_DESC &
+" | sudo tee /etc/cron.d/check-netvfy
+sudo killall -1 crond
 
 log_debug "netvfy: execution finished."
