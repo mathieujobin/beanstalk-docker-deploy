@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -x
 
 # This script needs you to set a new ENV var in your Beanstalk environment.
 
@@ -62,16 +62,13 @@ function add_node_to_network() {
   PROV_CODE=$(curl -s -H 'X-netvfy-email: '${EMAIL}'' -H 'X-netvfy-apikey: '${APIKEY}'' https://${HOST}/v1/node?network_uid=$NET_UID \
     | jq -r ".nodes[] | select(.description==\"$NODE_DESC\").provcode")
 
-if [ "$PROV_CODE" = "" ]
-then
-  log_debug "netvfy: provision code already used"
-  exit 0
-else
-  log_debug "netvfy: got provision code: $PROV_CODE, going onto the network..."
-fi
-
-
-  $DEST_SCRIPT -k "$PROV_CODE" -n $NET_DESC
+  if [ "$PROV_CODE" = "" ]
+  then
+    log_debug "netvfy: provision code already used"
+  else
+    log_debug "netvfy: got provision code: $PROV_CODE, going onto the network..."
+    $DEST_SCRIPT -k "$PROV_CODE" -n $NET_DESC
+  fi
 
   log_debug "netvfy: return from using provision code (I think it gets stuck there...)"
 }
@@ -94,5 +91,3 @@ else
 fi
 
 log_debug "netvfy: execution finished."
-
-exit 0
