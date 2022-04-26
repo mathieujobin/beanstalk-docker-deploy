@@ -82,18 +82,27 @@ fi
 # if [[ $(sudo file /root/.config/netvfy/nvagent.json) ]]
 if [[ $(sudo cat /root/.config/netvfy/nvagent.json | jq -r ".networks[] | select(.name==\"$NET_DESC\").pvkey") ]]
 then
-  log_debug "netvfy: node is already provision, creating a cron job to connect to the network..."
+  log_debug "netvfy: node is already provision"
 else
   add_node_to_network
-  log_debug "netvfy: creating a cron job to connect to the network..."
 fi
 
 echo "
-SHELL=/bin/bash
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-MAILTO=root
-*/2 * * * * root ps auxww | grep -q ^root.*netvfy-agent.*$NET_DESC || $DEST_SCRIPT -c $NET_DESC &
-" | sudo tee /etc/cron.d/check-netvfy
-sudo killall -1 crond
+[Unit]
+Description=Netvfy Agent service
+After=crond.service
+
+[Service]
+ExecStart=$DEST_SCRIPT -c $NET_DESC
+KillMode=process
+Restart=on-failure
+RestartSec=60s
+
+[Install]
+WantedBy=multi-user.target
+" | sudo tee /usr/lib/systemd/system/netvfy-agent-$NET_DESC.service
+sudo systemctl daemon-reload
+log_debug "netvfy: systemctl daemon definition overriden and reloaded... now restarting"
+sudo systemctl restart netvfy-agent-$NET_DESC
 
 log_debug "netvfy: execution finished."
