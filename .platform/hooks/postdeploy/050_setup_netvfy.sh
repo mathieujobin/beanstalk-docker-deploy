@@ -93,6 +93,7 @@ Description=Netvfy Agent service
 After=crond.service
 
 [Service]
+Environment="HOME=/root"
 ExecStart=$DEST_SCRIPT -c $NET_DESC
 KillMode=process
 Restart=on-failure
@@ -103,6 +104,7 @@ WantedBy=multi-user.target
 " | sudo tee /usr/lib/systemd/system/netvfy-agent-$NET_DESC.service
 sudo systemctl daemon-reload
 log_debug "netvfy: systemctl daemon definition overriden and reloaded... now restarting"
+sudo systemctl enable netvfy-agent-$NET_DESC
 sudo systemctl restart netvfy-agent-$NET_DESC
 
 log_debug "netvfy: execution finished."
