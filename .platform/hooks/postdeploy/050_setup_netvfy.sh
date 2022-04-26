@@ -43,7 +43,9 @@ function add_node_to_network() {
   EMAIL="$netvfy_username"
   HOST="api.netvfy.com"
   IP_SUFFIX="`ip -4 addr show eth0 | grep inet | awk -F / {'print $1'} | cut -c 15-`"
-  NODE_DESC="$netvfy_node_prefix-$IP_SUFFIX-$EC2_INSTANCE_ID" # `mktemp -u XXXXXXXXXX`
+  #NODE_DESC="$netvfy_node_prefix-$IP_SUFFIX-$EC2_INSTANCE_ID"
+  BOOT_DATETIME=$(ls -ltr /etc/hostname | awk {'print $7 $6 $8'})
+  NODE_DESC="$netvfy_node_prefix-$IP_SUFFIX-$BOOT_DATETIME"
   APIKEY=$(curl -s -H 'Content-Type: application/json' -d '{"email":"'${EMAIL}'","password":"'${PASSWORD}'"}' \
     -X POST https://${HOST}/v1/client/newapikey | jq -r '.client.apikey')
 
