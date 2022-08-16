@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'yaml'
-require 'byebug'
 
 eval File.read("#{ARGV[0]}/.deploy_vars")
 
