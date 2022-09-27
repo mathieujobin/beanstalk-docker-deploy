@@ -35,6 +35,9 @@ create_file_with_content('machine-identification', '/home/ec2-user/machine-id', 
 command = %q[if [ \"\$1\" = \"bash\" ]
 then
   cmd=\"bash\"
+elif [ \"\$1\" = \"db\" ]
+then
+  cmd=\"apt update && apt install mysql-client && bundle exec rails db -p\"
 else
   cmd=\"bundle exec rails c -e staging\"
 fi
