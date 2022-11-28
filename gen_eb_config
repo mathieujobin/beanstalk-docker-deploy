@@ -17,11 +17,15 @@ data = {
 File.open(filename, "wb+") { |f| f.write data.to_yaml }
 
 def create_file_with_content(ebext_name, output_file, content)
+  setup_ebextension_command(ebext_name, %Q[echo "#{content}" > #{output_file}])
+end
+
+def setup_ebextension_command(ebext_name, command)
   filename = ".ebextensions/#{ebext_name}.config"
   data = {
     "container_commands" => {
       "01_execute" => {
-        "command" => "echo \"#{content}\" > #{output_file}",
+        "command" => command,
         "ignoreErrors" => "false"
       }
     }
@@ -32,6 +36,7 @@ end
 
 create_file_with_content('machine-identification', '/home/ec2-user/machine-id', ARGV[2])
 
+## setup_ebextension_command('install_mysqlclient', "apt update && apt install mysql-client")
 command = %q[if [ \"\$1\" = \"bash\" ]
 then
   cmd=\"bash\"
