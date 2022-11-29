@@ -37,13 +37,12 @@ then
   cmd=\"bash\"
 elif [ \"\$1\" = \"db\" ]
 then
-  cmd=\"apt update && apt install mysql-client && bundle exec rails db -p\"
+  cmd=\"bundle exec rails db -p\"
 else
-  cmd=\"bundle exec rails c -e staging\"
+  cmd=\"bundle exec rails c\"
 fi
 echo \"executing \$cmd on container\"
 sudo docker exec -it \$(sudo docker container ls | tail -n 1 | awk {'print \$1'}) \$cmd]
-command.sub!('staging', ARGV[1]) if ARGV[1] != 'staging'
 create_file_with_content('create_docker_jump', '/home/ec2-user/jumpin', command)
 
 app_name_parts = EB_APP_NAME.split(/_/)
