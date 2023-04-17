@@ -33,6 +33,7 @@ time sudo docker build \
   --build-arg env_secret_passphrase=${!gpg_secret_var_name} \
   --build-arg deploy_stage=$stage \
   --build-arg app_gitsha=$gitsha \
+  --build-arg app_message="$message" \
   --build-arg builder_gitsha=$builder_gitsha \
   -t $app-$stage-tmp .
 cd -
