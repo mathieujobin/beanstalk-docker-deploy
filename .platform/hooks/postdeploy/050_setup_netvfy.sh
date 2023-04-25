@@ -25,6 +25,23 @@ NET_DESC="$netvfy_netdesc"
 DEST_SCRIPT="/usr/local/sbin/netvfy-agent"
 
 function build_install_agent() {
+  yum -y install git cmake jansson-devel libevent-devel libcurl-devel gcc gcc-c++ make openssl-devel
+  git clone https://github.com/netvfy/netvfy-agent.git /tmp/netvfy-agent
+  cd /tmp/netvfy-agent
+  git submodule init
+  git submodule update
+  cd tapcfg
+  pip install scons
+  ./buildall.sh || true
+  mkdir ../build_cli
+  cd ../build_cli
+  cmake ..
+  make
+  log_debug "netvfy: agent has been built, installing to /usr/local/sbin/"
+  mv src/netvfy-agent /usr/local/sbin/
+}
+
+function build_install_go_agent() {
   yum -y install git go
   git clone https://github.com/netvfy/go-netvfy-agent.git /tmp/go-netvfy-agent
   cd /tmp/go-netvfy-agent
