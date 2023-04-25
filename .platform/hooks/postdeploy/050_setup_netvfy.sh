@@ -78,8 +78,8 @@ function add_node_to_network() {
 
   log_debug "netvfy: got NET_UID: $NET_UID"
 
-  PROV_CODE=$(curl -s -H 'X-netvfy-email: '${EMAIL}'' -H 'X-netvfy-apikey: '${APIKEY}'' https://${HOST}/v1/node?network_uid=$NET_UID \
-    | jq -r ".nodes[] | select(.description==\"$NODE_DESC\").provcode")
+  all_nodes=$(curl -s -H 'X-netvfy-email: '${EMAIL}'' -H 'X-netvfy-apikey: '${APIKEY}'' https://${HOST}/v1/node?network_uid=$NET_UID)
+  PROV_CODE=$(echo $all_nodes | jq -r ".nodes[] | select(.description==\"$NODE_DESC\").provcode")
 
   if [ "$PROV_CODE" = "" ]
   then
@@ -89,7 +89,11 @@ function add_node_to_network() {
     $DEST_SCRIPT -k "$PROV_CODE" -n $NET_DESC
   fi
 
-  log_debug "netvfy: return from using provision code (I think it gets stuck there...)"
+  log_debug "netvfy: setup completed"
+
+  prefix_length=$(echo -n $netvfy_node_prefix | wc -c)
+  dead_nodes=$(echo $all_nodes | jq -r ".nodes[] | select(.status==\"0\") | select(.description[0:$prefix_length]==\"$netvfy_node_prefix\")")
+
 }
 
 if [ ! -e $DEST_SCRIPT ]
