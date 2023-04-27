@@ -91,8 +91,15 @@ function add_node_to_network() {
 
   log_debug "netvfy: setup completed"
 
+
   prefix_length=$(echo -n $netvfy_node_prefix | wc -c)
-  dead_nodes=$(echo $all_nodes | jq -r ".nodes[] | select(.status==\"0\") | select(.description[0:$prefix_length]==\"$netvfy_node_prefix\")")
+  dead_nodes=$(echo $all_nodes | jq -r ".nodes[] | select(.status==\"0\") | select(.description[0:$prefix_length]==\"$netvfy_node_prefix\").description")
+  for deadnode in $dead_nodes
+  do
+    echo "Deleting $deadnode"
+    curl -s -H 'X-netvfy-email: '${EMAIL}'' -H 'X-netvfy-apikey: '${APIKEY}'' -X DELETE \
+      "https://${HOST}/v1/node?network_description=${NET_DESC}&description=${deadnode}"
+  done
 
 }
 
