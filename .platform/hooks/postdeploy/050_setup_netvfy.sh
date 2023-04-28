@@ -25,7 +25,7 @@ NET_DESC="$netvfy_netdesc"
 DEST_SCRIPT="/usr/local/sbin/netvfy-agent"
 
 function build_install_agent() {
-  yum -y install git cmake jansson-devel libevent-devel libcurl-devel gcc gcc-c++ make openssl-devel
+  yum -y install git cmake pip jansson-devel libevent-devel libcurl-devel gcc gcc-c++ make openssl-devel
   git clone https://github.com/netvfy/netvfy-agent.git /tmp/netvfy-agent
   cd /tmp/netvfy-agent
   git submodule init
