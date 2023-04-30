@@ -15,7 +15,7 @@ for s in $(/opt/elasticbeanstalk/bin/get-config environment | jq -r "to_entries|
 
 log_debug "Starting netvfy init: after fetching beanstalk config? $netvfy_username"
 
-if [ "$netvfy_username" = "" -o "$netvfy_password" = "" -o "$netvfy_netdesc" = "" -o "$netvfy_node_prefix" = "" ]
+if [ "$netvfy_username" = "" -o "$netvfy_apikey" = "" -o "$netvfy_netdesc" = "" -o "$netvfy_node_prefix" = "" ]
 then
   log_debug "config missing"
   exit 0
@@ -63,8 +63,7 @@ function add_node_to_network() {
   #NODE_DESC="$netvfy_node_prefix-$IP_SUFFIX-$EC2_INSTANCE_ID"
   BOOT_DATETIME=$(ls -ltr /etc/hostname | awk {'print $7 $6 $8'})
   NODE_DESC="$netvfy_node_prefix-$IP_SUFFIX-$BOOT_DATETIME"
-  APIKEY=$(curl -s -H 'Content-Type: application/json' -d '{"email":"'${EMAIL}'","password":"'${PASSWORD}'"}' \
-    -X POST https://${HOST}/v1/client/newapikey | jq -r '.client.apikey')
+  APIKEY=$netvfy_apikey
 
   log_debug "netvfy: We've got a netvfy api key: $APIKEY"
 

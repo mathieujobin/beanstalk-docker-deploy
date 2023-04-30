@@ -75,7 +75,31 @@ Finally, you can push your changes to S3 like this.
 
 `./gpg_config ../project_app/ staging push`
 
-Ready to build and deploy ?
+## Optional - Get every ec2 node on Netvfy VPN
+
+Sign up for an account at www.netvfy.com and create your network.
+
+Call this endpoint via `curl` in order to get your APIKEY that will be used to provision nodes into the network.
+
+```bash
+curl -s -H 'Content-Type: application/json' -d '{"email":"'${EMAIL}'","password":"'${PASSWORD}'"}' \
+    -X POST https://api.netvfy.com/v1/client/newapikey2 | jq -r '.client.apikey'
+```
+
+Then add these four variables to your beanstalk environment.
+
+* netvfy_username    # your netvfy login user name
+* netvfy_apikey      # the API you just got from the call above.
+* netvfy_netdesc     # The network name you have created after signing in
+* netvfy_node_prefix # a prefix of your choice to identify this beanstalk deploy environment from other nodes.
+
+Note that disconnected nodes with the same prefix will automatically get deleted when a new node joins the network.
+There is currently no option to disable that other than commenting out the lines 95-104 from the script.
+
+https://github.com/mathieujobin/beanstalk-docker-deploy/blob/d2b10b6f4208d14d8dbcb329ddac11bdc5536111/.platform/hooks/postdeploy/050_setup_netvfy.sh#L95-L104
+
+
+## Ready to build and deploy ?
 
 `./docker-rebuild ../project_app/ staging "testing out mike's stuff"`
 
