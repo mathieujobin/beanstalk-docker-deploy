@@ -1,0 +1,16 @@
+#!/bin/bash
+
+netvfy_node_prefix=$1
+
+EMAIL="$netvfy_username"
+HOST="api.netvfy.com"
+APIKEY=$netvfy_apikey
+NET_DESC=$netvfy_network
+
+NET_UID="$(curl -s -H 'X-netvfy-email: '${EMAIL}'' -H 'X-netvfy-apikey: '${APIKEY}'' https://${HOST}/v1/network | jq -r ".networks[] | select(.description==\"${NET_DESC}\").uid")"
+all_nodes=$(curl -s -H 'X-netvfy-email: '${EMAIL}'' -H 'X-netvfy-apikey: '${APIKEY}'' https://${HOST}/v1/node?network_uid=$NET_UID)
+prefix_length=$(echo -n $netvfy_node_prefix | wc -c)
+available_nodes=$(echo $all_nodes | jq -r ".nodes[] | select(.status==\"1\") | select(.description[0:$prefix_length]==\"$netvfy_node_prefix\").ipaddress")
+echo "Available IPs for $netvfy_node_prefix: $available_nodes"
+echo "Going to first one..."
+ssh ec2-user@$(echo -n $available_nodes | awk {'print $1'})
