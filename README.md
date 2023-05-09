@@ -47,6 +47,14 @@ key_two bar"
 EB_PRODUCTION_SSH_KEYS=EB_STAGING_SSH_KEYS
 ```
 
+## Create your Elastic Beanstalk app
+
+I plan to automate this when this project gets more traction but for now. The app needs to exists.
+
+![step 1 - choose web app type](doc/1-beanstalk-choose-web.png)
+![step 2 - pick app name and env name](doc/2-beanstalk-choose-app-and-env-name.png)
+![step 3 - pick docker deploy type](doc/3-beanstalk-docker-linux-v2.png)
+
 ## Initial push
 
 before you run the script the first time, you want to make sure you create the Amazon ECR repository first
