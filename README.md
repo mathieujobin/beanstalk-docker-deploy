@@ -40,6 +40,11 @@ GPG_ENV_PREFIX="ABCDEF"
 GPG_DEBUG=false
 S3_URL_PREFIX="bucketname/beanstalk-config/abcdef"
 S3_GPG_FILE_PREFIX="abcdef"
+
+# If you want to auto push SSH keys onto each node, per environment
+EB_STAGING_SSH_KEYS="keyone foo
+key_two bar"
+EB_PRODUCTION_SSH_KEYS=EB_STAGING_SSH_KEYS
 ```
 
 ## Initial push

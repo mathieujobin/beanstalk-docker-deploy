@@ -36,6 +36,12 @@ end
 
 create_file_with_content('machine-identification', '/home/ec2-user/machine-id', ARGV[2])
 
+begin
+  create_file_with_content('ssh-authorized-keys', '/home/ec2-user/.ssh/authorized_keys', Object.const_get("EB_#{ARGV[1].upcase}_SSH_KEYS"))
+rescue NameError
+  puts "SSH Keys for stage: #{ARGV[1]} not found, skipping..."
+end
+
 ## setup_ebextension_command('install_mysqlclient', "apt update && apt install mysql-client")
 command = %q[if [ \"\$1\" = \"bash\" ]
 then
