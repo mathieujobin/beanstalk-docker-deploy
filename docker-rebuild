@@ -1,4 +1,7 @@
-#!/bin/bash -xe
+#!/bin/bash -e
+
+# uncomment to get bash tracing
+# set -x
 
 if [ $# != 3 -a $# != 2 ]; then
   echo missing arguments: $0 app_folder stage message
