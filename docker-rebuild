@@ -56,7 +56,17 @@ git add -f .elasticbeanstalk/config.yml .ebextensions/*.config
 # Tagging and pushing to remote
 sudo docker tag $app-$stage-tmp $remote_repo/$build_label
 sudo docker tag $app-$stage-tmp $remote_repo/$app-$stage:latest
-sudo $(aws ecr get-login --region $AWS_REGION --profile $AWS_CRED_PROFILE --no-include-email)
+if [[ $(aws --version | grep aws-cli/1) ]]; then
+  echo "using aws-cli v1 with ecr get-login"
+  sudo $(aws ecr get-login --region $AWS_REGION --profile $AWS_CRED_PROFILE --no-include-email)
+elif [[ $(aws --version | grep aws-cli/2) ]]; then
+  echo "using aws-cli v2 with ecr get-login-password"
+  aws_login_pass=$(aws ecr get-login-password --region $AWS_REGION --profile $AWS_CRED_PROFILE)
+  echo $aws_login_pass | docker login --username AWS --password-stdin $remote_repo
+else
+  echo "unsupported version of aws-cli"
+  exit 77
+fi
 sudo docker push $remote_repo/$build_label
 sudo docker push $remote_repo/$app-$stage:latest
 
