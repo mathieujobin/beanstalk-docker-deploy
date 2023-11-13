@@ -32,7 +32,7 @@ if [ "$message" = "" ];then
   message=$(git show -s --pretty='format:%s, %ad')
 fi
 
-time sudo docker build \
+time sudo docker buildx build \
   --build-arg env_secret_passphrase=${!gpg_secret_var_name} \
   --build-arg deploy_stage=$stage \
   --build-arg app_gitsha=$gitsha \
