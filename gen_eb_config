@@ -46,6 +46,9 @@ end
 command = %q[if [ \"\$1\" = \"bash\" ]
 then
   cmd=\"bash\"
+elif [ \"\$1\" = \"db:migrate\" ]
+then
+  cmd=\"bundle exec rails db:migrate\"
 elif [ \"\$1\" = \"db\" ]
 then
   cmd=\"bundle exec rails db -p\"
